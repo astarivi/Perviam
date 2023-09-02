@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+apply plugin: 'application'
+
+mainClassName = 'ovh.astarivi.Main'
+group = 'ovh.astarivi'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://jitpack.io'
+    }
+}
+
+dependencies {
+    implementation 'org.jetbrains:annotations:24.0.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+
+    // Logging
+    implementation 'org.tinylog:tinylog-api:2.6.2'
+    runtimeOnly 'org.tinylog:tinylog-impl:2.6.2'
+    runtimeOnly 'org.tinylog:slf4j-tinylog:2.6.2'
+
+    // Jackson
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.2'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+    testCompileOnly 'org.projectlombok:lombok:1.18.28'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
+
+    // Test
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+shadowJar {
+    mergeServiceFiles()
+    archiveFileName = 'perviam.jar'
+}
