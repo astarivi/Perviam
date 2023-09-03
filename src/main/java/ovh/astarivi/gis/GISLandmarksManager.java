@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.tinylog.Logger;
 import ovh.astarivi.gis.models.GISPoint2D;
 import ovh.astarivi.gis.remote.Overpass;
-import ovh.astarivi.gis.remote.models.OverpassElement;
+import ovh.astarivi.gis.remote.models.landmarks.LandmarksElement;
 import ovh.astarivi.gis.remote.models.OverpassResponse;
 import ovh.astarivi.gis.utils.Data;
 import ovh.astarivi.gis.utils.Utils;
@@ -58,16 +58,16 @@ public class GISLandmarksManager {
 
         String overpassQuery =
             """
-            [out:json];area["ISO3166-1"="%s"]->.plimit;(%s);out;
+            area["ISO3166-1"="%s"]->.plimit;(%s);out;
             """.formatted(
                     country,
                     formattedLandmarks
             );
 
-        OverpassResponse response;
+        OverpassResponse<LandmarksElement> response;
 
         try {
-            response = Overpass.executeQuery(overpassQuery);
+            response = Overpass.executeQuery(overpassQuery, LandmarksElement.class);
         } catch (Exception e) {
             Logger.error("LandmarksManager couldn't generate the Landmarks list due to the last error reported.");
             Logger.info("Note that landmark generation may require a higher timeout");
@@ -89,7 +89,7 @@ public class GISLandmarksManager {
 
         ArrayList<GISLandmark> landmarksList = new ArrayList<>();
 
-        for (OverpassElement element : response.elements) {
+        for (LandmarksElement element : response.elements) {
             try {
                 landmarksList.add(
                         new GISLandmark(element.lat, element.lon, Objects.requireNonNull(element.tags.get("name")))
@@ -152,20 +152,13 @@ public class GISLandmarksManager {
         for (GISLandmark landmark : landmarks) {
             double currentDistance = landmark.location.haversineDistance(point);
 
-            if (distance == null) {
-                distance = currentDistance;
-                closestSoFar = landmark;
-                continue;
-            }
-
-            if (currentDistance < distance) {
+            if (distance == null || currentDistance < distance) {
                 distance = currentDistance;
                 closestSoFar = landmark;
             }
         }
 
-        //noinspection ConstantValue
-        if (closestSoFar == null || distance == null) throw new IllegalStateException("Landmarks manager list was empty.");
+        if (closestSoFar == null) throw new IllegalStateException("Landmarks manager list was empty.");
 
         return new ClosestLandmark(closestSoFar, distance);
     }

@@ -1,4 +1,4 @@
-package ovh.astarivi.gis.remote.models;
+package ovh.astarivi.gis.remote.models.landmarks;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OverpassElement {
+public class LandmarksElement {
     public String type;
     public long id;
     public double lat;

@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OverpassResponse {
+public class OverpassResponse<E> {
     public Float version;
     public String generator;
     public OSM3S osm3s;
-    public OverpassElement[] elements;
+    public E[] elements;
 
     public static class OSM3S {
         public String timestamp_osm_base;

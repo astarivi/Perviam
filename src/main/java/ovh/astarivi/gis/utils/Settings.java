@@ -17,6 +17,7 @@ public class Settings {
     public List<String> landmarks;
     public String country;
     public Integer remoteTimeout;
+    public Integer reverseGeocoderDistance;
 
     // Used by Jackson
     public Settings() {
@@ -30,6 +31,7 @@ public class Settings {
         country = "FR";
         overpassUrl = "https://overpass-api.de/api/interpreter";
         remoteTimeout = 60;
+        reverseGeocoderDistance = 50;
     }
 
     private boolean isHealthy() {

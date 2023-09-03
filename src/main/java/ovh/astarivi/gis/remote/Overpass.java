@@ -1,5 +1,6 @@
 package ovh.astarivi.gis.remote;
 
+import com.fasterxml.jackson.databind.ObjectReader;
 import okhttp3.*;
 import org.tinylog.Logger;
 import ovh.astarivi.gis.remote.exceptions.BadRequestException;
@@ -31,13 +32,14 @@ public class Overpass {
 
     private static final HttpUrl overpassUrl;
 
-    public static OverpassResponse executeQuery(String query) throws BadRequestException, IOException {
+    public static <T> OverpassResponse<T> executeQuery(String query, Class<T> responseType) throws BadRequestException, IOException {
         Request.Builder requestBuilder = new Request.Builder();
+        //noinspection KotlinInternalInJava
         requestBuilder.url(overpassUrl);
         requestBuilder.addHeader("Accept","application/json");
         requestBuilder.post(
                 RequestBody.create(
-                        query,
+                        "[out:json];" + query,
                         MediaType.get("text/plain; charset=utf-8")
                 )
         );
@@ -50,7 +52,13 @@ public class Overpass {
             }
 
             try (ResponseBody body = response.body()) {
-                return Data.getObjectReader().readValue(Objects.requireNonNull(body).bytes(), OverpassResponse.class);
+                ObjectReader reader = Data.getObjectReader();
+
+                return reader.forType(
+                        reader.getTypeFactory().constructParametricType(OverpassResponse.class, responseType)
+                ).readValue(
+                        Objects.requireNonNull(body).bytes()
+                );
             }
         } catch (IOException | NullPointerException e) {
             Logger.error("Error while processing Overpass query {} to URL {}", query, overpassUrl);

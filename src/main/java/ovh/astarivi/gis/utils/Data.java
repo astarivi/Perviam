@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class Data {
+    @Getter
     private static final ObjectMapper mapper = new ObjectMapper();
     @Getter
     private static final Settings settings = Settings.load();
