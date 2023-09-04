@@ -1,11 +1,13 @@
 package ovh.astarivi.gis;
 
 
+import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
 import ovh.astarivi.gis.remote.Overpass;
 import ovh.astarivi.gis.remote.exceptions.BadRequestException;
 import ovh.astarivi.gis.remote.exceptions.PrematureStopException;
 import ovh.astarivi.gis.remote.models.OverpassResponse;
+import ovh.astarivi.gis.remote.models.intersection.IntersectionElement;
 import ovh.astarivi.gis.remote.models.reverse.ReverseElement;
 
 import java.io.IOException;
@@ -23,18 +25,18 @@ public class GISIntersectionFinder {
             ".x out qt;" +
             ".c out qt;";
 
-    public static ReverseElement[] getClosestIntersections(ReverseElement element) throws PrematureStopException {
-        OverpassResponse<ReverseElement> response;
+    public static IntersectionElement @Nullable [] getClosestIntersections(ReverseElement element) throws PrematureStopException {
+        OverpassResponse<IntersectionElement> response;
 
         try {
             response = Overpass.executeQuery(
                     query.formatted(
                             element.id
                     ),
-                    ReverseElement.class
+                    IntersectionElement.class
             );
         } catch (BadRequestException | IOException e) {
-            Logger.info("Dropping last request for intersection {} due to last issue", element);
+            Logger.info("Dropping last request for intersection element {} due to last issue", element);
             throw new PrematureStopException(e);
         }
 

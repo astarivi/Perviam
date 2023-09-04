@@ -9,16 +9,17 @@ import ovh.astarivi.gis.remote.Overpass;
 import ovh.astarivi.gis.remote.exceptions.BadRequestException;
 import ovh.astarivi.gis.remote.exceptions.PrematureStopException;
 import ovh.astarivi.gis.remote.models.OverpassResponse;
+import ovh.astarivi.gis.remote.models.reverse.BoundaryElement;
 import ovh.astarivi.gis.remote.models.reverse.ReverseElement;
 import ovh.astarivi.gis.utils.Data;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.TreeMap;
 
 
 public class GISReverseGeocoder {
     private static final String query = "way(around:%d,%f,%f);out geom qt;";
+    private static final String queryBoundaries = "is_in(%f,%f);area._[admin_level][type=boundary];out;";
 
     // Gets the element by searching for the closest node
     public static @Nullable ReverseElement getClosestElement(@NotNull GISPoint2D location) throws PrematureStopException {
@@ -123,5 +124,24 @@ public class GISReverseGeocoder {
             throw new IllegalStateException("Empty ReverseElement at ReverseGeocoder for " + location);
 
         return closestSoFar;
+    }
+
+    public static BoundaryElement[] getBoundaries(@NotNull GISPoint2D location) throws PrematureStopException {
+        OverpassResponse<BoundaryElement> overpassResponse;
+
+        try {
+            overpassResponse = Overpass.executeQuery(
+                    queryBoundaries.formatted(
+                            location.latitude().value(),
+                            location.longitude().value()
+                    ),
+                    BoundaryElement.class
+            );
+        } catch (BadRequestException | IOException e) {
+            Logger.info("Dropping last request for location {} due to last issue", location);
+            throw new PrematureStopException(e);
+        }
+
+        return overpassResponse.elements;
     }
 }
