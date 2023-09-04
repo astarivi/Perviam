@@ -18,7 +18,7 @@ import java.util.TreeMap;
 
 
 public class GISReverseGeocoder {
-    private static final String query = "way(around:%d,%f,%f);out geom qt;";
+    private static final String query = "way(around:%d,%f,%f)[!building];out geom qt;";
     private static final String queryBoundaries = "is_in(%f,%f);area._[admin_level][type=boundary];out;";
 
     // Gets the element by searching for the closest node
