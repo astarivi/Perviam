@@ -7,8 +7,9 @@ import ovh.astarivi.gis.models.GISPoint2D;
 import ovh.astarivi.gis.remote.Overpass;
 import ovh.astarivi.gis.remote.models.landmarks.LandmarksElement;
 import ovh.astarivi.gis.remote.models.OverpassResponse;
-import ovh.astarivi.gis.utils.Data;
-import ovh.astarivi.gis.utils.Utils;
+import ovh.astarivi.utils.Data;
+import ovh.astarivi.utils.Serialization;
+import ovh.astarivi.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,11 +41,11 @@ public class GISLandmarksManager {
     }
 
     private GISLandmark[] generateLandmarks() {
-        String country = System.getenv().getOrDefault("COUNTRY", Data.getSettings().country);
+        String country = System.getenv().getOrDefault("COUNTRY", Data.getInstance().getSettings().country);
 
         Logger.info("Landmarks generation is about to start.");
 
-        if (Data.getSettings().landmarks.isEmpty()) {
+        if (Data.getInstance().getSettings().landmarks.isEmpty()) {
             Logger.error("Landmarks settings is an empty list, and the Landmarks functionality was activated.");
             Logger.error("Check your settings.json file.");
             Logger.error("The app will now terminate.");
@@ -52,7 +53,7 @@ public class GISLandmarksManager {
         }
 
         StringBuilder formattedLandmarks = new StringBuilder();
-        for (String landmark : Data.getSettings().landmarks) {
+        for (String landmark : Data.getInstance().getSettings().landmarks) {
             formattedLandmarks.append(String.format("node[\"place\"=\"%s\"](area.plimit);", landmark));
         }
 
@@ -117,7 +118,7 @@ public class GISLandmarksManager {
     private GISLandmark[] loadLandmarks() {
         Logger.info("Loading landmarks from disk to memory");
         try {
-            return Data.getObjectReader().readValue(landmarksFile, GISLandmark[].class);
+            return Serialization.getObjectReader().readValue(landmarksFile, GISLandmark[].class);
         } catch (IOException e) {
             Logger.error("Error while reading file {}, it may be corrupt.", landmarksFile.getPath());
             Logger.error(e);
@@ -127,7 +128,7 @@ public class GISLandmarksManager {
 
     private void saveLandmarks() {
         try {
-            Data.getObjectWriter().writeValue(landmarksFile, landmarks);
+            Serialization.getObjectWriter().writeValue(landmarksFile, landmarks);
         } catch (IOException e) {
             Logger.error("Error while saving landmarks file {}, there may be a permissions error.",
                     landmarksFile.getPath());

@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class IntersectionElement implements Comparable<IntersectionElement> {
+public class IntersectionElement implements Comparable<IntersectionElement>{
     public String type;
     public long id;
     public Double lat;
@@ -17,8 +17,7 @@ public class IntersectionElement implements Comparable<IntersectionElement> {
     public List<Long> nodes;
     public TreeMap<String, String> tags;
 
-    @JsonIgnore
-    @Override
+    @Override @JsonIgnore
     public String toString() {
         return "IntersectionElement{" +
                 "type='" + type + '\'' +
@@ -30,8 +29,7 @@ public class IntersectionElement implements Comparable<IntersectionElement> {
                 '}';
     }
 
-    @JsonIgnore
-    @Override
+    @Override @JsonIgnore
     public int compareTo(@NotNull IntersectionElement o) {
         return tags.get("name").compareTo(o.tags.get("name"));
     }

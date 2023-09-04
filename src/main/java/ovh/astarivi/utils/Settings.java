@@ -1,4 +1,4 @@
-package ovh.astarivi.gis.utils;
+package ovh.astarivi.utils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -19,6 +20,7 @@ public class Settings {
     public Integer remoteTimeout;
     public Integer reverseGeocoderDistance;
     public String languageCode;
+    public List<Integer> boundariesAdminLevels;
 
     // Used by Jackson
     public Settings() {
@@ -34,6 +36,12 @@ public class Settings {
         remoteTimeout = 60;
         reverseGeocoderDistance = 50;
         languageCode = "en";
+        boundariesAdminLevels = Arrays.asList(2, 4, 8, 10);
+        boundariesAdminLevels.sort(Collections.reverseOrder());
+    }
+
+    private void initialize() {
+        boundariesAdminLevels.sort(Collections.reverseOrder());
     }
 
     private boolean isHealthy() {
@@ -62,7 +70,9 @@ public class Settings {
 
         try {
             if (settingsFile.exists()) {
-                Settings loadedSettings = Data.getObjectReader().readValue(settingsFile, Settings.class);
+                Settings loadedSettings = Serialization.getObjectReader().readValue(settingsFile, Settings.class);
+
+                loadedSettings.initialize();
 
                 if (loadedSettings.isHealthy()) return loadedSettings;
 
@@ -73,7 +83,7 @@ public class Settings {
                 Settings defaultSettings = new Settings(1);
 
                 Logger.info("Writing settings file...");
-                Data.getObjectWriter().withDefaultPrettyPrinter().writeValue(settingsFile, defaultSettings);
+                Serialization.getObjectWriter().withDefaultPrettyPrinter().writeValue(settingsFile, defaultSettings);
 
                 return defaultSettings;
             }

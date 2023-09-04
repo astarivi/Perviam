@@ -1,4 +1,4 @@
-package ovh.astarivi.gis.utils;
+package ovh.astarivi.utils;
 
 import org.tinylog.Logger;
 

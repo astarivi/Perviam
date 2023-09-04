@@ -5,7 +5,8 @@ import okhttp3.*;
 import org.tinylog.Logger;
 import ovh.astarivi.gis.remote.exceptions.BadRequestException;
 import ovh.astarivi.gis.remote.models.OverpassResponse;
-import ovh.astarivi.gis.utils.Data;
+import ovh.astarivi.utils.Data;
+import ovh.astarivi.utils.Serialization;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -13,7 +14,7 @@ import java.util.Objects;
 
 public class Overpass {
     static {
-        String buildUrl = System.getenv().getOrDefault("OVERPASS_URL", Data.getSettings().overpassUrl);
+        String buildUrl = System.getenv().getOrDefault("OVERPASS_URL", Data.getInstance().getSettings().overpassUrl);
 
         HttpUrl parsedOverpassUrl = HttpUrl.parse(
                 buildUrl
@@ -44,7 +45,7 @@ public class Overpass {
                 )
         );
 
-        try(Response response = Data.getHttpClient().newCall(requestBuilder.build()).execute()) {
+        try(Response response = Data.getInstance().getHttpClient().newCall(requestBuilder.build()).execute()) {
             if (response.code() != 200) {
                 Logger.warn("Overpass responded with code {}, aborting this request...", response.code());
                 Logger.info("Dropped request was: {}", query);
@@ -52,7 +53,7 @@ public class Overpass {
             }
 
             try (ResponseBody body = response.body()) {
-                ObjectReader reader = Data.getObjectReader();
+                ObjectReader reader = Serialization.getObjectReader();
 
                 return reader.forType(
                         reader.getTypeFactory().constructParametricType(OverpassResponse.class, responseType)

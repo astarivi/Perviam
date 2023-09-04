@@ -11,15 +11,17 @@ import ovh.astarivi.gis.remote.exceptions.PrematureStopException;
 import ovh.astarivi.gis.remote.models.OverpassResponse;
 import ovh.astarivi.gis.remote.models.reverse.BoundaryElement;
 import ovh.astarivi.gis.remote.models.reverse.ReverseElement;
-import ovh.astarivi.gis.utils.Data;
+import ovh.astarivi.utils.Data;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 
 public class GISReverseGeocoder {
     private static final String query = "way(around:%d,%f,%f)[!building];out geom qt;";
-    private static final String queryBoundaries = "is_in(%f,%f);area._[admin_level][type=boundary];out;";
+    private static final String queryBoundaries = "is_in(%f,%f);area._[admin_level][type=boundary][boundary=administrative];out;";
 
     // Gets the element by searching for the closest node
     public static @Nullable ReverseElement getClosestElement(@NotNull GISPoint2D location) throws PrematureStopException {
@@ -28,7 +30,7 @@ public class GISReverseGeocoder {
         try {
             overpassResponse = Overpass.executeQuery(
                     query.formatted(
-                            Data.getSettings().reverseGeocoderDistance,
+                            Data.getInstance().getSettings().reverseGeocoderDistance,
                             location.latitude().value(),
                             location.longitude().value()
                     ),
@@ -68,13 +70,13 @@ public class GISReverseGeocoder {
     }
 
     // Gets the element by searching the closest segment
-    public static @Nullable ReverseElement getClosestElementAccurate(@NotNull GISPoint2D location) throws PrematureStopException {
+    public static ReverseElement getClosestElementAccurate(@NotNull GISPoint2D location) throws PrematureStopException {
         OverpassResponse<ReverseElement> overpassResponse;
 
         try {
             overpassResponse = Overpass.executeQuery(
                     query.formatted(
-                            Data.getSettings().reverseGeocoderDistance,
+                            Data.getInstance().getSettings().reverseGeocoderDistance,
                             location.latitude().value(),
                             location.longitude().value()
                     ),
@@ -85,7 +87,7 @@ public class GISReverseGeocoder {
             throw new PrematureStopException(e);
         }
 
-        if (overpassResponse.elements.length == 0) return null;
+        if (overpassResponse.elements.length == 0) throw new PrematureStopException("No results for these coordinates");
         if (overpassResponse.elements.length == 1) return overpassResponse.elements[0];
 
         ReverseElement closestSoFar = null;
@@ -126,7 +128,7 @@ public class GISReverseGeocoder {
         return closestSoFar;
     }
 
-    public static BoundaryElement[] getBoundaries(@NotNull GISPoint2D location) throws PrematureStopException {
+    public static TreeSet<BoundaryElement> getBoundaries(@NotNull GISPoint2D location) throws PrematureStopException {
         OverpassResponse<BoundaryElement> overpassResponse;
 
         try {
@@ -142,6 +144,8 @@ public class GISReverseGeocoder {
             throw new PrematureStopException(e);
         }
 
-        return overpassResponse.elements;
+        if (overpassResponse.elements.length == 0) throw new PrematureStopException("No boundaries for this set of data");
+
+        return new TreeSet<>(Arrays.asList(overpassResponse.elements));
     }
 }

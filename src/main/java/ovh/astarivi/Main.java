@@ -5,6 +5,10 @@ import ovh.astarivi.gis.GISLandmarksManager;
 import ovh.astarivi.gis.GISReverseGeocoder;
 import ovh.astarivi.gis.models.GISPoint2D;
 import ovh.astarivi.gis.remote.exceptions.PrematureStopException;
+import ovh.astarivi.gis.remote.models.reverse.BoundaryElement;
+import ovh.astarivi.location.TranslateLocation;
+
+import java.util.TreeSet;
 
 
 public class Main {
@@ -18,6 +22,12 @@ public class Main {
             )
         );
 
+        TreeSet<BoundaryElement> boundaries = GISReverseGeocoder.getBoundaries(testingPoint);
+
+        System.out.println(
+                boundaries
+        );
+
         System.out.println(
                 GISIntersectionFinder.getClosestIntersections(
                     testingPoint,
@@ -25,6 +35,14 @@ public class Main {
                             testingPoint
                     )
                 )
+        );
+
+        String location = TranslateLocation.get(
+                testingPoint
+        );
+
+        System.out.println(
+                location
         );
     }
 }
