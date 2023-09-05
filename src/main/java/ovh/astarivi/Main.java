@@ -14,7 +14,7 @@ import java.util.TreeSet;
 public class Main {
     public static void main(String[] args) throws PrematureStopException {
 
-        GISPoint2D testingPoint = new GISPoint2D(47.45975,-0.55251);
+        GISPoint2D testingPoint = new GISPoint2D(47.759177519676484, 1.326297387571581);
 
         System.out.println(
             GISLandmarksManager.getInstance().getClosestLandmarkTo(

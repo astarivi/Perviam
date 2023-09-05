@@ -45,26 +45,38 @@ public class TranslateLocation {
     ) throws PrematureStopException {
         TreeSet<IntersectionElement> intersections = GISIntersectionFinder.getClosestIntersections(location, closestElement);
 
+        String currentStreet = getLocalizedTag(closestElement.tags, "name");
+
+        if (currentStreet == null) {
+            currentStreet = closestElement.tags.get("ref");
+            if (currentStreet == null) throw new PrematureStopException("No name for this main street");
+
+            currentStreet = MessageFormat.format(
+                    getI18nString("street_ref_prefix"),
+                    currentStreet
+            );
+        }
+
         String mainStreet;
 
         switch (intersections.size()) {
             case 0:
                 mainStreet = MessageFormat.format(
                         getI18nString("address_lone"),
-                        getLocalizedTag(closestElement.tags, "name")
+                        currentStreet
                 );
                 break;
             case 1:
                 mainStreet = MessageFormat.format(
                         getI18nString("address_between_one"),
-                        getLocalizedTag(closestElement.tags, "name"),
+                        currentStreet,
                         getLocalizedTag(intersections.first().tags, "name")
                 );
             default:
             case 2:
                 mainStreet = MessageFormat.format(
                         getI18nString("address_between_two"),
-                        getLocalizedTag(closestElement.tags, "name"),
+                        currentStreet,
                         getLocalizedTag(intersections.first().tags, "name"),
                         getLocalizedTag(intersections.last().tags, "name")
                 );
@@ -81,7 +93,7 @@ public class TranslateLocation {
         for (BoundaryElement boundaryElement : boundaryElements) {
             int currentAdminLevel = Integer.parseInt(boundaryElement.tags.get("admin_level"));
 
-            if (!Data.getInstance().getSettings().boundariesAdminLevels.contains(currentAdminLevel)) continue;
+            if (!Data.getInstance().getSettings().cityAdminLevels.contains(currentAdminLevel)) continue;
 
             boundaries.append(Translation.getLocalizedTag(boundaryElement.tags, "name")).append(", ");
         }

@@ -1,6 +1,5 @@
 package ovh.astarivi.i18n;
 
-import org.jetbrains.annotations.NotNull;
 import ovh.astarivi.utils.Data;
 
 import java.util.TreeMap;
@@ -13,7 +12,7 @@ public class Translation {
         return Data.getInstance().getI18n().getString(key);
     }
 
-    public static @NotNull String getLocalizedTag(TreeMap<String, String> tags, String key) {
+    public static String getLocalizedTag(TreeMap<String, String> tags, String key) {
         String i18nTag = tags.get(
                 String.format(
                         "%s:%s",

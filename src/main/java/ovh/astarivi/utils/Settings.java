@@ -20,7 +20,7 @@ public class Settings {
     public Integer remoteTimeout;
     public Integer reverseGeocoderDistance;
     public String languageCode;
-    public List<Integer> boundariesAdminLevels;
+    public List<Integer> cityAdminLevels;
 
     // Used by Jackson
     public Settings() {
@@ -36,12 +36,12 @@ public class Settings {
         remoteTimeout = 60;
         reverseGeocoderDistance = 50;
         languageCode = "en";
-        boundariesAdminLevels = Arrays.asList(2, 4, 8, 10);
-        boundariesAdminLevels.sort(Collections.reverseOrder());
+        cityAdminLevels = Arrays.asList(2, 4, 8, 10);
+        cityAdminLevels.sort(Collections.reverseOrder());
     }
 
     private void initialize() {
-        boundariesAdminLevels.sort(Collections.reverseOrder());
+        cityAdminLevels.sort(Collections.reverseOrder());
     }
 
     private boolean isHealthy() {
