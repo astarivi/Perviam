@@ -21,6 +21,8 @@ public class Settings {
     public Integer reverseGeocoderDistance;
     public String languageCode;
     public List<Integer> cityAdminLevels;
+    public List<Integer> ruralAdminLevels;
+    public int landmarkAreaKm;
 
     // Used by Jackson
     public Settings() {
@@ -37,11 +39,15 @@ public class Settings {
         reverseGeocoderDistance = 50;
         languageCode = "en";
         cityAdminLevels = Arrays.asList(2, 4, 8, 10);
-        cityAdminLevels.sort(Collections.reverseOrder());
+        ruralAdminLevels = Arrays.asList(2, 4, 6, 8, 10);
+        landmarkAreaKm = 14;
+
+        initialize();
     }
 
     private void initialize() {
         cityAdminLevels.sort(Collections.reverseOrder());
+        ruralAdminLevels.sort(Collections.reverseOrder());
     }
 
     private boolean isHealthy() {

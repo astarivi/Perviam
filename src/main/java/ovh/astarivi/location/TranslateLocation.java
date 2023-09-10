@@ -1,16 +1,15 @@
 package ovh.astarivi.location;
 
-import org.jetbrains.annotations.NotNull;
 import org.tinylog.Logger;
 import ovh.astarivi.gis.GISIntersectionFinder;
+import ovh.astarivi.gis.GISLandmarksManager;
 import ovh.astarivi.gis.GISReverseGeocoder;
 import ovh.astarivi.gis.models.GISPoint2D;
 import ovh.astarivi.gis.remote.exceptions.PrematureStopException;
 import ovh.astarivi.gis.remote.models.intersection.IntersectionElement;
-import ovh.astarivi.gis.remote.models.reverse.BoundaryElement;
 import ovh.astarivi.gis.remote.models.reverse.ReverseElement;
-import ovh.astarivi.i18n.Translation;
 import ovh.astarivi.utils.Data;
+import ovh.astarivi.utils.Utils;
 
 import java.text.MessageFormat;
 import java.util.TreeSet;
@@ -20,16 +19,32 @@ import static ovh.astarivi.i18n.Translation.getLocalizedTag;
 
 
 public class TranslateLocation {
+    private static final double LANDMARK_AREA = Data.getInstance().getSettings().landmarkAreaKm;
+
     public static String get(GISPoint2D location) {
         try {
-            String boundaries = getBoundaries(location);
+            GISLandmarksManager.ClosestLandmark closestLandmark = GISLandmarksManager
+                    .getInstance()
+                    .getClosestLandmarkTo(
+                            location
+                    );
 
-            ReverseElement closestElement = GISReverseGeocoder.getClosestElementAccurate(
+            boolean isInCity = isInCity(closestLandmark);
+
+            String boundaries = GISReverseGeocoder
+                    .getBoundaries(
+                            location
+                    ).verboseBoundaries(
+                            isInCity
+                    );
+
+            ReverseElement closestElement = GISReverseGeocoder.getClosestElement(
                     location
             );
 
             return "%s, %s".formatted(
-                    translateCityLocation(location, closestElement),
+                    isInCity ? translateCityLocation(location, closestElement)
+                            : translateRuralLocation(closestElement, closestLandmark),
                     boundaries
             );
         } catch (PrematureStopException ignored) {
@@ -39,6 +54,36 @@ public class TranslateLocation {
         }
 
         return getI18nString("placeholder");
+    }
+
+    private static boolean isInCity(GISLandmarksManager.ClosestLandmark closestLandmark) {
+        return closestLandmark.distanceKm() < LANDMARK_AREA;
+    }
+
+    private static String translateRuralLocation(
+            ReverseElement closestElement,
+            GISLandmarksManager.ClosestLandmark closestLandmark
+    ) throws PrematureStopException {
+        String currentStreet = getLocalizedTag(closestElement.tags, "name");
+
+        if (currentStreet == null) {
+            currentStreet = closestElement.tags.get("ref");
+            if (currentStreet == null) throw new PrematureStopException("No name for this rural route");
+
+            currentStreet = MessageFormat.format(
+                    getI18nString("street_ref_prefix"),
+                    currentStreet
+            );
+        }
+
+        if (Utils.isMostlyNumeric(currentStreet)) {
+            currentStreet = MessageFormat.format(
+                    getI18nString("street_ref_prefix"),
+                    currentStreet
+            );
+        }
+
+        return currentStreet;
     }
 
     private static String translateCityLocation(
@@ -85,23 +130,5 @@ public class TranslateLocation {
         }
 
         return mainStreet;
-    }
-
-    private static @NotNull String getBoundaries(GISPoint2D location) throws PrematureStopException {
-        TreeSet<BoundaryElement> boundaryElements = GISReverseGeocoder.getBoundaries(location);
-
-        StringBuilder boundaries = new StringBuilder();
-
-        for (BoundaryElement boundaryElement : boundaryElements) {
-            int currentAdminLevel = Integer.parseInt(boundaryElement.tags.get("admin_level"));
-
-            if (!Data.getInstance().getSettings().cityAdminLevels.contains(currentAdminLevel)) continue;
-
-            boundaries.append(Translation.getLocalizedTag(boundaryElement.tags, "name")).append(", ");
-        }
-
-        boundaries.delete(boundaries.length() - 2, boundaries.length());
-
-        return boundaries.toString();
     }
 }

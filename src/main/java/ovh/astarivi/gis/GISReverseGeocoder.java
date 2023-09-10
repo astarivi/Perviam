@@ -1,8 +1,8 @@
 package ovh.astarivi.gis;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.tinylog.Logger;
+import ovh.astarivi.gis.models.GISBoundaries;
 import ovh.astarivi.gis.models.GISPoint2D;
 import ovh.astarivi.gis.models.GISSegment2D;
 import ovh.astarivi.gis.remote.Overpass;
@@ -20,11 +20,11 @@ import java.util.TreeSet;
 
 
 public class GISReverseGeocoder {
-    private static final String query = "way(around:%d,%f,%f)[!building];out geom qt;";
+    private static final String query = "way(around:%d,%f,%f)[!building][highway~\"motorway|trunk|primary|secondary|tertiary|residential|unclassified\"];out geom qt;";
     private static final String queryBoundaries = "is_in(%f,%f);area._[admin_level][type=boundary][boundary=administrative];out;";
 
     // Gets the element by searching for the closest node
-    public static @Nullable ReverseElement getClosestElement(@NotNull GISPoint2D location) throws PrematureStopException {
+    public static ReverseElement getClosestElement(@NotNull GISPoint2D location) throws PrematureStopException {
         OverpassResponse<ReverseElement> overpassResponse;
 
         try {
@@ -41,7 +41,7 @@ public class GISReverseGeocoder {
             throw new PrematureStopException(e);
         }
 
-        if (overpassResponse.elements.length == 0) return null;
+        if (overpassResponse.elements.length == 0) throw new PrematureStopException("No results for these coordinates");
         if (overpassResponse.elements.length == 1) return overpassResponse.elements[0];
 
         ReverseElement closestSoFar = null;
@@ -128,7 +128,7 @@ public class GISReverseGeocoder {
         return closestSoFar;
     }
 
-    public static TreeSet<BoundaryElement> getBoundaries(@NotNull GISPoint2D location) throws PrematureStopException {
+    public static GISBoundaries getBoundaries(@NotNull GISPoint2D location) throws PrematureStopException {
         OverpassResponse<BoundaryElement> overpassResponse;
 
         try {
@@ -146,6 +146,6 @@ public class GISReverseGeocoder {
 
         if (overpassResponse.elements.length == 0) throw new PrematureStopException("No boundaries for this set of data");
 
-        return new TreeSet<>(Arrays.asList(overpassResponse.elements));
+        return new GISBoundaries(new TreeSet<>(Arrays.asList(overpassResponse.elements)));
     }
 }
