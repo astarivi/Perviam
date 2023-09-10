@@ -22,13 +22,15 @@ import static ovh.astarivi.i18n.Translation.getLocalizedTag;
 public class TranslateLocation {
     public static String get(GISPoint2D location) {
         try {
+            String boundaries = getBoundaries(location);
+
             ReverseElement closestElement = GISReverseGeocoder.getClosestElementAccurate(
                     location
             );
 
             return "%s, %s".formatted(
                     translateCityLocation(location, closestElement),
-                    getBoundaries(location)
+                    boundaries
             );
         } catch (PrematureStopException ignored) {
         } catch (Exception e) {

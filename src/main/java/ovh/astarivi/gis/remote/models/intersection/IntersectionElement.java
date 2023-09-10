@@ -31,6 +31,12 @@ public class IntersectionElement implements Comparable<IntersectionElement>{
 
     @Override @JsonIgnore
     public int compareTo(@NotNull IntersectionElement o) {
-        return tags.get("name").compareTo(o.tags.get("name"));
+        String thisName = tags.get("name");
+        String thatName = o.tags.get("name");
+
+        if (thisName == null) return -1;
+        if (thatName == null) return +1;
+
+        return thisName.compareTo(thatName);
     }
 }

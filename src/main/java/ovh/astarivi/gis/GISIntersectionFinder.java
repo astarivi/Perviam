@@ -106,11 +106,16 @@ public class GISIntersectionFinder {
         // Filter out remaining parts of the main way
         for (IntersectionElement currentWay : waysList) {
             for (long wayNode : currentWay.nodes) {
+                if ((wayNode != closestSegment[0].id && wayNode != closestSegment[1].id)
+                        || mainWay.id == currentWay.id) continue;
+
+                String currentWayName = currentWay.tags.get("name");
+
+                if (currentWayName == null && !currentWay.tags.containsKey("ref")) continue;
+
                 try {
                     if (
-                            (wayNode != closestSegment[0].id && wayNode != closestSegment[1].id) ||
-                                    mainWay.id == currentWay.id ||
-                                    mainWay.tags.get("name").equals(currentWay.tags.get("name"))
+                            mainWay.tags.get("name").equals(currentWayName)
                     ) continue;
                 } catch (NullPointerException ignored) {
                     continue;
