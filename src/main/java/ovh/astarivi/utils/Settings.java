@@ -32,7 +32,7 @@ public class Settings {
     // Used to initialize defaults
     @JsonIgnore
     public Settings(int i) {
-        landmarks = Arrays.asList("town", "city");
+        landmarks = List.of("city");
         country = "FR";
         overpassUrl = "https://overpass-api.de/api/interpreter";
         remoteTimeout = 60;

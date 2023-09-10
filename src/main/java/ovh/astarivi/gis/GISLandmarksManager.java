@@ -179,6 +179,13 @@ public class GISLandmarksManager {
     }
 
     public record ClosestLandmark(GISLandmark landmark, double distanceKm) {
-
+        @JsonIgnore
+        public String verboseDistance() {
+            if (distanceKm < 1.0) {
+                return "%d m".formatted(Math.round(distanceKm * 1000));
+            } else {
+                return "%.1f km".formatted(distanceKm);
+            }
+        }
     }
 }

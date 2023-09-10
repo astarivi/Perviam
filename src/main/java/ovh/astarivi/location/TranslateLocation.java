@@ -14,8 +14,7 @@ import ovh.astarivi.utils.Utils;
 import java.text.MessageFormat;
 import java.util.TreeSet;
 
-import static ovh.astarivi.i18n.Translation.getI18nString;
-import static ovh.astarivi.i18n.Translation.getLocalizedTag;
+import static ovh.astarivi.i18n.Translation.*;
 
 
 public class TranslateLocation {
@@ -83,7 +82,12 @@ public class TranslateLocation {
             );
         }
 
-        return currentStreet;
+        return MessageFormat.format(
+                getI18nString("rural_address"),
+                currentStreet,
+                closestLandmark.verboseDistance(),
+                closestLandmark.landmark().label()
+        );
     }
 
     private static String translateCityLocation(
@@ -104,31 +108,22 @@ public class TranslateLocation {
             );
         }
 
-        String mainStreet;
-
-        switch (intersections.size()) {
-            case 0:
-                mainStreet = MessageFormat.format(
-                        getI18nString("address_lone"),
-                        currentStreet
-                );
-                break;
-            case 1:
-                mainStreet = MessageFormat.format(
-                        getI18nString("address_between_one"),
-                        currentStreet,
-                        getLocalizedTag(intersections.first().tags, "name")
-                );
-            default:
-            case 2:
-                mainStreet = MessageFormat.format(
-                        getI18nString("address_between_two"),
-                        currentStreet,
-                        getLocalizedTag(intersections.first().tags, "name"),
-                        getLocalizedTag(intersections.last().tags, "name")
-                );
-        }
-
-        return mainStreet;
+        return switch (intersections.size()) {
+            case 0 -> MessageFormat.format(
+                    getI18nString("address_lone"),
+                    currentStreet
+            );
+            case 1 -> MessageFormat.format(
+                    getI18nString("address_between_one"),
+                    currentStreet,
+                    getNameForWay(intersections.first().tags)
+            );
+            default -> MessageFormat.format(
+                    getI18nString("address_between_two"),
+                    currentStreet,
+                    getNameForWay(intersections.first().tags),
+                    getNameForWay(intersections.last().tags)
+            );
+        };
     }
 }

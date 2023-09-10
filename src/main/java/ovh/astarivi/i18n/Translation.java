@@ -24,10 +24,18 @@ public class Translation {
 
         if (i18nTag != null) return i18nTag;
 
-        i18nTag = tags.get(
+        return tags.get(
                 key
         );
+    }
 
-        return i18nTag;
+    public static @Nullable String getNameForWay(TreeMap<String, String> tags) {
+        String result = getLocalizedTag(tags, "name");
+
+        if (result != null) return result;
+
+        return tags.get(
+                "ref"
+        );
     }
 }
