@@ -1,13 +1,10 @@
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id 'io.freefair.lombok' version '8.3'
+    id 'io.freefair.lombok' version '8.6'
 }
 
-apply plugin: 'application'
-
-mainClassName = 'ovh.astarivi.Main'
-group = 'ovh.astarivi'
+group = 'ovh.astarivi.perviam'
 version = '1.0'
 
 repositories {
@@ -32,7 +29,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.2'
 
     // Test
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
 }
 
 test {
