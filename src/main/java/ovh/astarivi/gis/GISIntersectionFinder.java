@@ -114,9 +114,7 @@ public class GISIntersectionFinder {
                 if (currentWayName == null && !currentWay.tags.containsKey("ref")) continue;
 
                 try {
-                    if (
-                            mainWay.tags.get("name").equals(currentWayName)
-                    ) continue;
+                    if (mainWay.tags.get("name").equals(currentWayName)) continue;
                 } catch (NullPointerException ignored) {
                     continue;
                 }

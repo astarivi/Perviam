@@ -67,12 +67,15 @@ public class TranslateLocation {
 
         if (currentStreet == null) {
             currentStreet = closestElement.tags.get("ref");
-            if (currentStreet == null) throw new PrematureStopException("No name for this rural route");
 
-            currentStreet = MessageFormat.format(
-                    getI18nString("street_ref_prefix"),
-                    currentStreet
-            );
+            if (currentStreet == null) {
+                currentStreet = getI18nString("unknown_street");
+            } else {
+                currentStreet = MessageFormat.format(
+                        getI18nString("street_ref_prefix"),
+                        currentStreet
+                );
+            }
         }
 
         if (Utils.isMostlyNumeric(currentStreet)) {
@@ -100,12 +103,14 @@ public class TranslateLocation {
 
         if (currentStreet == null) {
             currentStreet = closestElement.tags.get("ref");
-            if (currentStreet == null) throw new PrematureStopException("No name for this main street");
-
-            currentStreet = MessageFormat.format(
-                    getI18nString("street_ref_prefix"),
-                    currentStreet
-            );
+            if (currentStreet == null) {
+                currentStreet = getI18nString("unknown_street");
+            } else {
+                currentStreet = MessageFormat.format(
+                        getI18nString("street_ref_prefix"),
+                        currentStreet
+                );
+            }
         }
 
         return switch (intersections.size()) {
