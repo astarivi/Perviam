@@ -46,8 +46,8 @@ application {
 }
 
 java {
-    sourceCompatibility = JavaVersion.toVersion("17")
-    targetCompatibility = JavaVersion.toVersion("17")
+    sourceCompatibility = JavaVersion.toVersion("21")
+    targetCompatibility = JavaVersion.toVersion("21")
 }
 
 graalvmNative.toolchainDetection = false
@@ -71,6 +71,10 @@ micronaut {
         optimizeNetty = true
         replaceLogbackXml = true
     }
+}
+
+tasks.named("dockerfileNative") {
+    jdkVersion = "21"
 }
 
 test {
