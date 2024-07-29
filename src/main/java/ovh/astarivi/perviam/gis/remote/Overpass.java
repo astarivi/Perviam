@@ -35,7 +35,6 @@ public class Overpass {
 
     public static <T> OverpassResponse<T> executeQuery(String query, Class<T> responseType) throws BadRequestException, IOException {
         Request.Builder requestBuilder = new Request.Builder();
-        //noinspection KotlinInternalInJava
         requestBuilder.url(overpassUrl);
         requestBuilder.addHeader("Accept","application/json");
         requestBuilder.post(

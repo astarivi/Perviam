@@ -33,7 +33,7 @@ public class TranslateLocation {
 
             String boundaries = gisBoundaries.verboseBoundaries();
 
-            ReverseElement closestElement = GISReverseGeocoder.getClosestElement(
+            ReverseElement closestElement = GISReverseGeocoder.getClosestElementAccurate(
                     location
             );
 
