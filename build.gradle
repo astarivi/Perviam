@@ -77,6 +77,11 @@ tasks.named("dockerfileNative") {
     jdkVersion = "21"
 }
 
+tasks.named("dockerBuildNative") {
+    // Modify this
+    images = ["perviam:$project.version"]
+}
+
 test {
     useJUnitPlatform()
     testLogging {
