@@ -2,7 +2,7 @@ FROM bellsoft/liberica-openjre-alpine:21.0.4-9-cds AS builder
 
 RUN mkdir /opt/build
 WORKDIR /opt/build
-COPY . .
+COPY perviam .
 RUN gradlew shadowJar
 
 FROM bellsoft/liberica-openjre-alpine:21.0.4-9-cds
