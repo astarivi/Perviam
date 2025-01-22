@@ -15,7 +15,6 @@ java {
     targetCompatibility = JavaVersion.toVersion("17")
 }
 
-
 // Dist option 1 (distZip)
 application {
     mainClass = "ovh.astarivi.perviam.Application"
