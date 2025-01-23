@@ -1,4 +1,5 @@
-FROM bellsoft/liberica-openjre-alpine:21.0.4-9-cds
+ARG BASE_IMAGE=docker.io/eclipse-temurin:21-jre-alpine
+FROM ${BASE_IMAGE}
 
 RUN mkdir /root/storage /root/logs
 ENV STORAGE_FOLDER='/root/storage'

@@ -1,91 +1,79 @@
-# Configuration and setup
-Perviam was designed with flexibility in mind, and most meaningful operation parameters can be configured through
-environment variables, or configuration files.
+# Configuration
+Perviam is built for flexibility, allowing most operational parameters to be customized using environment variables or configuration files.
 
-# Environment variables
-Some key values are loaded from the environment first, and if not found, they fall back to the configuration file value.
-These are:
+# Environment Variables
+Key configuration values are first sourced from the environment. If not found, they default to values specified in the configuration file. Below are the primary environment variables:
 
-- ## `STORAGE_FOLDER`
-  - This is the first environment variable you may want to set. This allows the storage folder location to change.
-  If the folder doesn't exist, it will be created.
-  - Example: `/home/perviam/config`
-  - Default: `./config`
-- ## `LANGUAGE`
-  - Changes the response language. Must be set to an [IETF BCP 47](https://en.wikipedia.org/wiki/IETF_language_tag)
-    [two-letter](https://en.wikipedia.org/wiki/ISO_639-1) code. Optionally, a tighter tag may be used, ex: `fr-CA`.
-    The translation must exist, and Perviam must have been built with the translation file. Check [Translation docs](Translation.md)
-    for info on how to create translations.
-  - Example: `en`
-- ## `COUNTRY`
-  - Set the country before startup. You may want to do this to avoid generating useless landmarks on a first run.
-  The country must be specified using the [ISO3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) tag format.
-  - Example: `US`
-- ## `OVERPASS_URL`
-  - Overrides the Overpass URL. Useful for testing and load balancing purposes.
-  - Example: `https://overpass-api.de/api/interpreter`
-- ## `REMOTE_TIMEOUT`
-  - Sets the remote read timeout. This represents the Overpass response timeout. It's set in seconds, and must be a number.
-  It's recommended to keep a sane value to avoid hanging connections.
-  - Example: `60`
+## `STORAGE_FOLDER`
+- Defines the location of the storage folder. If the folder does not exist, it will be created.
+- **Example**: `/home/perviam/config`
+- **Default**: `./config`
 
-# Configuration keys
-After first run, `STORAGE_FOLDER` will contain the `settings.json` configuration file. If `STORAGE_FOLDER` is unset, a
-new folder `config` will be created at the current working directory and it will contain `settings.json`.
+## `LANGUAGE`
+- Sets the response language. Use an [IETF BCP 47](https://en.wikipedia.org/wiki/IETF_language_tag) [two-letter code](https://en.wikipedia.org/wiki/ISO_639-1), or a more specific tag such as `fr-CA`.
+- The selected translation must exist, and Perviam must be built with the corresponding translation file. Refer to the [Translation docs](Translation.md) for details on creating translations.
+- **Example**: `en`
 
-### `landmarks.json` must be removed manually to trigger a landmark regeneration
+## `COUNTRY`
+- Specifies the country to avoid generating unnecessary landmarks during the initial run. Use the [ISO3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) tag format.
+- **Example**: `US`
 
-- ## `overpassUrl`
-  - Changes the Overpass URL to use for queries.
-  - Default: `https://overpass-api.de/api/interpreter`
-- ## `landmarks`
-  - A list of what we should consider a landmark. Currently unused.
-  - Default: `["city"]`
-- ## `country`
-  - The country for this instance. An instance can only have a single country, and the value will be used to generate
-  the landmarks.
-  - Ideally, a single Perviam instance will serve queries from a single country. To work around this
-  limitation multiple instances can be run.
-  - The country must be specified using the [ISO3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) tag format.
-  - Default: `US`
-- ## `remoteTimeout`
-  - Sets the remote read timeout. This represents the Overpass response timeout. 
-  - It's recommended to keep a sane value to avoid hanging connections.
-  - Set in seconds.
-  - Default: `60`
-- ## `reverseGeocoderDistance`
-  - Changes the distance used for reverse geocoding resolution. This directly affects the quality of the results.
-  - A higher value means targets further away from the road will resolve, but accuracy suffers.
-  - A lower value leads to an increase in accuracy, but a total failure to resolve targets that are further away from roads.
-  - Higher values will load the Overpass API significantly more.
-  - In meters.
-  - Default: `50`
-- ## `languageCode`
-  - Changes the response language. 
-  - Must be set to an [IETF BCP 47](https://en.wikipedia.org/wiki/IETF_language_tag)
-    [two-letter](https://en.wikipedia.org/wiki/ISO_639-1) code. 
-  - A tighter tag may be used for localization purposes, ex: `fr-CA`.
-  - The translation must exist, and Perviam must have been built with the translation file. Check [Translation docs](Translation.md)
-    for info on how to create translations.
-  - Default: `en`
-- ## `adminLevelCity`
-  - The OSM `admin_level` that's considered a "city" at the currently configured country.
-  - Check the [boundary=administrative](https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative) OSM wiki
-  page for an up-to-date list of admin level definitions.
-  - Default: `8` (for USA)
-- ## `cityAdminLevels`
-  - The `admin_level`s to include in the result of a query inside a city.
-  - Check the [boundary=administrative](https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative) OSM wiki
-  page for an up-to-date list of admin level definitions.
-  - Example: If set to `[8, 4, 2]`, it will include the city, state, and country on the output (for the USA): 
-  `Des Moines, Iowa, United States of America`
-  - Order is irrelevant, it will always be sorted from more to least specific.
-  - If a requested `admin_level` is not found, it's skipped.
-  - Default: `[2, 4, 8, 10]` (for USA)
-- ## `ruralAdminLevels`
-  - Behaves similarly to `cityAdminLevels`, but is used whenever the result of a query is outside the boundary of
-  a city.
-  - Check the [boundary=administrative](https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative) OSM wiki
-  page for an up-to-date list of admin level definitions.
-  - This setting allows for further fine-tuning of rural addresses, adding more details where available.
-  - Default: `[2, 4, 6, 8, 10]` (for USA)
+## `OVERPASS_URL`
+- Overrides the default Overpass URL. Useful for testing or load balancing.
+- **Example**: `https://overpass-api.de/api/interpreter`
+
+## `REMOTE_TIMEOUT`
+- Sets the timeout (in seconds) for Overpass API responses. Use a reasonable value to avoid hanging connections.
+- **Example**: `60`
+
+# Configuration Keys
+Upon the first run, the `settings.json` file is created in the directory specified by `STORAGE_FOLDER`. If `STORAGE_FOLDER` is not set, a new `config` folder will be created in the current working directory to hold the file.
+
+**Note**: To regenerate landmarks, manually delete `landmarks.json`.
+
+## `overpassUrl`
+- Defines the Overpass URL for queries.
+- **Default**: `https://overpass-api.de/api/interpreter`
+
+## `landmarks`
+- Specifies items to consider as landmarks. Currently unused.
+- **Default**: `["city"]`
+
+## `country`
+- Sets the instance's country. Only one country can be served per instance, and this value is used to generate landmarks.
+- For multi-country setups, run multiple instances.
+- Use the [ISO3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) tag format.
+- **Default**: `US`
+
+## `remoteTimeout`
+- Configures the Overpass API response timeout in seconds. Maintain a reasonable value to prevent hanging connections.
+- **Default**: `60`
+
+## `reverseGeocoderDistance`
+- Adjusts the distance (in meters) used for reverse geocoding. This impacts result quality and Overpass API load:
+  - Higher values resolve targets farther from roads but reduce accuracy.
+  - Lower values improve accuracy but may fail to resolve distant targets.
+- **Default**: `50`
+
+## `languageCode`
+- Sets the response language using an [IETF BCP 47](https://en.wikipedia.org/wiki/IETF_language_tag) code. Optionally use a more specific tag, e.g., `fr-CA`.
+- The translation must exist, and Perviam must be built with the appropriate translation file. Refer to the [Translation docs](Translation.md) for details.
+- **Default**: `en`
+
+## `adminLevelCity`
+- Specifies the OSM `admin_level` representing a "city" for the configured country.
+- Refer to the [OSM wiki](https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative) for admin level definitions.
+- **Default**: `8` (for USA)
+
+## `cityAdminLevels`
+- Lists `admin_level`s to include in city query results. For example, setting `[8, 4, 2]` includes city, state, and country in the output:
+  - **Example**: `Des Moines, Iowa, United States of America`
+- Order is irrelevant; results are always sorted from most to least specific.
+- Missing `admin_level`s are skipped.
+- **Default**: `[2, 4, 8, 10]` (for USA)
+
+## `ruralAdminLevels`
+- Similar to `cityAdminLevels`, but used for queries outside city boundaries. This allows fine-tuning of rural address details.
+- Refer to the [OSM wiki](https://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative) for admin level definitions.
+- **Default**: `[2, 4, 6, 8, 10]` (for USA)
+
