@@ -20,7 +20,7 @@ import java.util.Objects;
 public class GISLandmarksManager {
     private static volatile GISLandmarksManager _instance = null;
     private final File landmarksFile = new File(
-            Utils.assureEnv("STORAGE_FOLDER"),
+            Utils.getConfigurationFolder().toFile(),
             "landmarks.json"
     );
     private final GISLandmark[] landmarks;

@@ -40,7 +40,6 @@ launch4j {
     headerType = "console"
     downloadUrl = "https://adoptium.net/temurin/releases/"
     jreMinVersion = "17"
-    variables = ["STORAGE_FOLDER=%EXEDIR%\\storage"]
 }
 
 repositories {

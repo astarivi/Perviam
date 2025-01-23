@@ -35,14 +35,14 @@ public class Settings {
     @JsonIgnore
     public Settings(int i) {
         landmarks = List.of("city");
-        country = "CO";
+        country = "US";
         overpassUrl = "https://overpass-api.de/api/interpreter";
         remoteTimeout = 60;
         reverseGeocoderDistance = 50;
-        languageCode = "es";
+        languageCode = "en";
         cityAdminLevels = Arrays.asList(2, 4, 8, 10);
         ruralAdminLevels = Arrays.asList(2, 4, 6, 8, 10);
-        adminLevelCity = 7;
+        adminLevelCity = 8;
 
         initialize();
     }
@@ -71,18 +71,7 @@ public class Settings {
 
     @JsonIgnore
     public static Settings load() {
-        Path storageFolder = Path.of(Utils.assureEnv("STORAGE_FOLDER"));
-
-        if (Files.notExists(storageFolder)) {
-            try {
-                Files.createDirectories(storageFolder);
-            } catch (IOException e) {
-                Logger.error("Error while trying to create STORAGE_FOLDER at {}", storageFolder.toString());
-                Logger.error(e);
-
-                System.exit(1);
-            }
-        }
+        Path storageFolder = Utils.getConfigurationFolder();
 
         File settingsFile = new File(
                 storageFolder.toFile(),

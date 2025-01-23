@@ -2,7 +2,7 @@
 Is Perviam not available in your language?, not to worry, Perviam can be translated to any language, and even better,
 translations can be commited back to help others save time setting up.
 
-## Creating a translation
+# Creating a translation
 To begin with your translation, find the [IETF BCP 47](https://en.wikipedia.org/wiki/IETF_language_tag) language tag
 for your target. Prefer [broader tags](https://en.wikipedia.org/wiki/ISO_639-1), like "en" over "en-CA"
 whenever possible.
@@ -13,11 +13,11 @@ translation, or `perviam/src/main/resources/Messages_fr-CA.properties` for a mor
 
 This file will contain seven lines, each with a single message, formatted as `key=value`. Here are all the messages:
 
-### `placeholder`
+## `placeholder`
 This is the placeholder Perviam uses when the target location couldn't be resolved. 
 Example: `placeholder=Unknown address`
 
-### `unknown_street`
+## `unknown_street`
 This is a special placeholder used when a target street with no name is found, but it intersects with other streets that
 have enough data to compute a name. In these cases, we need a name to give to this street. 
 
@@ -26,7 +26,7 @@ available, like in road vs street, choose the one that can apply to both urban a
 
 Example: `unknown_street=Road`
 
-### `address_between_two`
+## `address_between_two`
 Used when the resolved street address is between two other streets. Take the following location as an example:
 
 ![A street between two other streets](res/address_between_two.png)
@@ -43,7 +43,7 @@ Takes three parameters:
 Example: `address_between_two={0} between {1} and {2}` would produce 
 *"North Kensington Street between 6th Street North and 5th Street North"*
 
-### `address_between_one`
+## `address_between_one`
 Used when the resolved address intersects a single street in the opposite axis.
 
 Takes two parameters:
@@ -52,7 +52,7 @@ Takes two parameters:
 
 Example: `address_between_one={0} at {1}` would produce *"North Kensington Street at 6th Street North"*.
 
-### `address_lone`
+## `address_lone`
 Used when only the current street was found, with no intersections.
 
 Takes one parameter:
@@ -60,7 +60,7 @@ Takes one parameter:
 
 Example: `address_lone={0}` would produce *"North Kensington Street"*.
 
-### `street_ref_prefix`
+## `street_ref_prefix`
 Used when the found street has no name, but has an associated number. 
 
 The definition for these roads can vary from country to country. In the United States, these are usually a part of the
@@ -72,7 +72,7 @@ Takes one parameter:
 
 Example: `street_ref_prefix=Route {0}` would produce *"Route 66"*, when {0} is 66.
 
-### `rural_address`
+## `rural_address`
 Rural addresses are a special case in Perviam. They are addresses found outside the boundaries of cities or towns, where
 there's usually no real way to reference the position of a vehicle against intersecting streets (because there are none).
 
@@ -89,3 +89,9 @@ Takes three parameters:
 
 - Example: `rural_address={0} at {1} of {2}` would produce *"Route 66 at 102 miles of Amarillo"*
 
+# Wrapping up
+
+Once your translation is complete, build it, and use it by setting the `languageCode` configuration value to your
+language tag.
+
+If everything looks good, feel free to contribute it back to the repo for others to use!
