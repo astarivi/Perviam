@@ -1,6 +1,11 @@
 # Configuration
 Perviam is built for flexibility, allowing most operational parameters to be customized using environment variables or configuration files.
 
+## What is a Landmark?
+In Perviam, all cities within the configured country are considered as Landmarks. On first run, Overpass will
+be queried for these, and they will be stored at the `landmarks.json` file. These are used as positional references
+for targets that are far away from urban areas.
+
 # Environment Variables
 Key configuration values are first sourced from the environment. If not found, they default to values specified in the configuration file. Below are the primary environment variables:
 

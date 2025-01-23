@@ -27,7 +27,7 @@ jobs:
         run: |
           cd perviam
           chmod +x gradlew
-          ./gradlew createExe shadowJar distZip
+          ./gradlew createExe shadowJar distZip --no-daemon
 
       - name: Move artifacts
         run: |
